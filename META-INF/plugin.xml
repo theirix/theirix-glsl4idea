@@ -1,0 +1,59 @@
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd" >
+<idea-plugin>
+    <actions>
+        <action id="GLSL_DEDUCE_EXPRESSION_TYPE"
+                class="glslplugin.actions.GLSLDeduceExpressionTypeAction"
+                text="Deduce Expression Type"
+                description="Tries to deduce the type of the expression in the selection.">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt T"
+                               second-keystroke="shift ctrl alt D"/>
+        </action>
+    </actions>
+    <name>GLSL Support</name>
+
+
+    <id>GLSL</id>
+    <description>Support for the OpenGL Shading Language</description>
+    <version>1.0</version>
+    <vendor>Foundation</vendor>
+    <idea-version since-build="8000"/>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+        <fileTypeFactory implementation="glslplugin.GLSLSupportLoader"/>
+        <colorSettingsPage implementation="glslplugin.GLSLColorAndFontsPage"/>
+        <lang.syntaxHighlighterFactory key="GLSL" implementationClass="glslplugin.GLSLHighlighterFactory"/>
+        <lang.braceMatcher language="GLSL" implementationClass="glslplugin.GLSLPairedBraceMatcher"/>
+        <lang.parserDefinition language="GLSL" implementationClass="glslplugin.lang.GLSLParserDefinition"/>
+        <lang.foldingBuilder language="GLSL" implementationClass="glslplugin.GLSLFoldingBuilder"/>
+        <lang.psiStructureViewFactory language="GLSL"
+                                      implementationClass="glslplugin.structureview.GLSLStructureViewFactory"/>
+        <annotator language="GLSL" implementationClass="glslplugin.annotation.GLSLAnnotator"/>
+
+        <intentionAction>
+            <className>glslplugin.intentions.vectorcomponents.VectorComponentsIntention</className>
+            <category>GLSL</category>
+        </intentionAction>
+        <codeInsight.lineMarkerProvider language="GLSL" implementationClass="glslplugin.extensions.GLSLLineMarkerProvider"/>
+
+    </extensions>
+
+    <application-components>
+
+        <!--<component>
+            <implementation-class>glslplugin.GLSLSupportLoader</implementation-class>
+        </component>-->
+
+        <!--todo:Loading the templates component causes a memory leak?-->
+        <component>
+            <implementation-class>glslplugin.components.GLSLTemplatesLoader</implementation-class>
+        </component>
+    </application-components>
+
+    <project-components>
+        <component>
+            <implementation-class>glslplugin.components.GLSLCompilerManager</implementation-class>
+        </component>
+    </project-components>
+</idea-plugin>

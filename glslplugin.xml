@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="glslplugin" default="generate scanners">
+
+
+    <property file="glslplugin.properties"/>
+    <!-- The jflex task definition -->
+    <taskdef name="jflex" classname="JFlex.anttask.JFlexTask">
+        <classpath location="JFlex.jar"/>
+    </taskdef>
+    <target name="generate scanners" description="compile scanners using jflex">
+        <jflex file="src/glslplugin/lang/scanner/GLSL.jflex" verbose="true" charat="true" nobak="on"
+               skeleton="src/glslplugin/lang/scanner/idea-flex.skeleton"/>
+    </target>
+</project>
