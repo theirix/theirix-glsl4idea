@@ -38,7 +38,21 @@ public class GLSLParsing {
     // The general approach for error return and flagging is that an error should only be returned when not flagged.
     // So, if an error is encountered; EITHER flag it in the editor OR propagate it down the call stack.
 
-    /* The source of tokens and the target for the AST nodes. */
+
+    // Traits of all binary operators.
+    // They must be listed in order of precedence.
+    private OperatorLevelTraits[] operatorPrecedence = new OperatorLevelTraits[] {
+            new OperatorLevelTraits(TokenSet.create(OR_OP), "sub expression", LOGICAL_OR_EXPRESSION),
+            new OperatorLevelTraits(TokenSet.create(XOR_OP), "sub expression", LOGICAL_XOR_EXPRESSION),
+            new OperatorLevelTraits(TokenSet.create(AND_OP), "sub expression", LOGICAL_AND_EXPRESSION),
+            new OperatorLevelTraits(EQUALITY_OPERATORS, "sub expression", EQUALITY_EXPRESSION),
+            new OperatorLevelTraits(RELATIONAL_OPERATORS, "sub expression", RELATIONAL_EXPRESSION),
+            new OperatorLevelTraits(ADDITIVE_OPERATORS, "part", ADDITIVE_EXPRESSION),
+            new OperatorLevelTraits(MULTIPLICATIVE_OPERATORS, "factor", MULTIPLICATIVE_EXPRESSION),
+    };
+
+
+    /* The source of operatorTokens and the target for the AST nodes. */
     private PsiBuilder b;
 
     GLSLParsing(PsiBuilder builder) {
@@ -48,7 +62,7 @@ public class GLSLParsing {
     /**
      * Skips forward in the stream until a token in the given set is encountered.
      * When the method returns the matching token will be the current if found,
-     * otherwise it will consume all remaining tokens.
+     * otherwise it will consume all remaining operatorTokens.
      *
      * @param set the set containing the token types to look for.
      */
@@ -61,7 +75,7 @@ public class GLSLParsing {
     /**
      * Skips forward in the stream until a token in the given token type is encountered.
      * When the method returns the matching token will be the current if found,
-     * otherwise it will consume all remaining tokens.
+     * otherwise it will consume all remaining operatorTokens.
      *
      * @param type token type to look for.
      */
@@ -203,7 +217,7 @@ public class GLSLParsing {
                     b.getTokenType() == COMMA ||
                     b.getTokenType() == LEFT_BRACKET ||
                     b.getTokenType() == EQUAL) {
-                // These are valid tokens after an identifier in a declarator.
+                // These are valid operatorTokens after an identifier in a declarator.
                 // ... try to parse declarator-list!
                 postType.rollbackTo();
                 parseDeclaratorList();
@@ -771,7 +785,7 @@ public class GLSLParsing {
         // conditional_expression: logical_or_expression
         //                       | logical_or_expression QUESTION expression COLON assignment_expression
         PsiBuilder.Marker mark = b.mark();
-        if (!parseLogicalOrExpression()) {
+        if (!parseOperatorExpression()) {
             mark.drop();
             return false;
         }
@@ -812,176 +826,76 @@ public class GLSLParsing {
         return true;
     }
 
-    private boolean parseLogicalOrExpression() {
-        // logical_or_expression: logical_xor_expression (OR_OP logical_xor_expression)*
+    private class OperatorLevelTraits {
+        private TokenSet operatorTokens;
+        private String partName;
+        private IElementType elementType;
+
+        private OperatorLevelTraits(TokenSet operatorTokens, String partName, IElementType elementType) {
+            this.operatorTokens = operatorTokens;
+            this.partName = partName;
+            this.elementType = elementType;
+        }
+
+        public TokenSet getOperatorTokens() {
+            return operatorTokens;
+        }
+
+        public String getPartName() {
+            return partName;
+        }
+
+        public IElementType getElementType() {
+            return elementType;
+        }
+    }
+
+    private boolean parseOperatorExpression() {
+        return parseOperatorExpressionLevel(0);
+    }
+
+    private boolean parseOperatorExpression(int level) {
         PsiBuilder.Marker mark = b.mark();
-        if (!parseLogicalXorExpression()) {
+        if (!parseOperatorExpressionLevel(level+1)) {
             mark.drop();
             return false;
         }
-        while (tryMatch(OR_OP)) {
-            if (parseLogicalXorExpression()) {
-                mark.done(LOGICAL_OR_EXPRESSION);
+
+        OperatorLevelTraits operatorLevel = operatorPrecedence[level];
+        while (tryMatch(operatorLevel.getOperatorTokens())) {
+            if (parseOperatorExpressionLevel(level+1)) {
+                mark.done(operatorLevel.getElementType());
                 mark = mark.precede();
             } else {
-                mark.error("Expected logical xor expression.");
-                return false;
+                PsiBuilder.Marker operatorMark = b.mark();
+                if(tryMatch(OPERATORS)) {
+                    do {
+                        operatorMark.error("Operator out of place.");
+                        if(parseOperatorExpressionLevel(level+1)) {
+                            mark.done(operatorLevel.getElementType());
+                            mark = mark.precede();
+                            break;
+                        } else {
+                            operatorMark = b.mark();
+                        }
+                    } while(tryMatch(OPERATORS));
+                } else {
+                    operatorMark.drop();
+                    mark.error(String.format("Expected a(n) %0s expression.", operatorLevel.getPartName()));
+                    return false;
+                }
             }
         }
         mark.drop();
         return true;
     }
 
-    private boolean parseLogicalXorExpression() {
-        // logical_xor_expression: logical_and_expression (XOR_OP logical_and_expression)*
-        PsiBuilder.Marker mark = b.mark();
-        if (!parseLogicalAndExpression()) {
-            mark.drop();
-            return false;
+    private boolean parseOperatorExpressionLevel(int level) {
+        if(level == operatorPrecedence.length) {
+            return parseUnaryExpression();
+        } else {
+            return parseOperatorExpression(level);
         }
-        while (tryMatch(XOR_OP)) {
-            if (parseLogicalAndExpression()) {
-                mark.done(LOGICAL_XOR_EXPRESSION);
-                mark = mark.precede();
-            } else {
-                mark.error("Expected logical and expression.");
-                return false;
-            }
-        }
-        mark.drop();
-        return true;
-    }
-
-    private boolean parseLogicalAndExpression() {
-        // logical_and_expression: inclusive_or_expression (AND_OP inclusive_or_expression)*
-        PsiBuilder.Marker mark = b.mark();
-        if (!parseInclusiveOrExpression()) {
-            mark.drop();
-            return false;
-        }
-        while (tryMatch(AND_OP)) {
-            if (parseInclusiveOrExpression()) {
-                mark.done(LOGICAL_AND_EXPRESSION);
-                mark = mark.precede();
-            } else {
-                mark.error("Expected logical equality expression.");
-                return false;
-            }
-        }
-        mark.drop();
-        return true;
-    }
-
-    private boolean parseInclusiveOrExpression() {
-        // inclusive_or_expression: exclusive_or_expression ('|' exclusive_expression)*
-        // NOT SUPPORTED IN THE STANDARD YET
-        return parseExclusiveOrExpression();
-    }
-
-    private boolean parseExclusiveOrExpression() {
-        // exclusive_or_expression: and_expression (XOR_OP and_expression)*
-        // NOT SUPPORTED IN THE STANDARD YET
-        return parseAndExpression();
-    }
-
-    private boolean parseAndExpression() {
-        // and_expression: equality_expression (AND_OP equality_expression)*
-        // NOT SUPPORTED IN THE STANDARD YET
-        return parseEqualityExpression();
-    }
-
-    private boolean parseEqualityExpression() {
-        // equality_expression: relational_expression ((EQ_OP|NE_OP) relational_expression)*
-        PsiBuilder.Marker mark = b.mark();
-        if (!parseRelationalExpression()) {
-            mark.drop();
-            return false;
-        }
-        while (tryMatch(EQUALITY_OPERATORS)) {
-            if (parseRelationalExpression()) {
-                mark.done(EQUALITY_EXPRESSION);
-                mark = mark.precede();
-            } else {
-                mark.error("Expected relational expression.");
-                return false;
-            }
-        }
-        mark.drop();
-        return true;
-    }
-
-    private boolean parseRelationalExpression() {
-        // relational_expression: shift_expression relop shift_expression
-        // relop: LEFT_ANGLE | RIGHT_ANGLE | LE_OP | GE_OP
-        // NOTE: relop factored out by the author.
-        PsiBuilder.Marker mark = b.mark();
-        if (!parseShiftExpression()) {
-            mark.drop();
-            return false;
-        }
-        while (tryMatch(RELATIONAL_OPERATORS)) {
-            if (parseShiftExpression()) {
-                mark.done(RELATIONAL_EXPRESSION);
-                mark = mark.precede();
-            } else {
-                mark.error("Expected an additive expression.");
-                return false;
-            }
-        }
-        mark.drop();
-        return true;
-    }
-
-    private boolean parseShiftExpression() {
-        // shift_expression: additive_expression (shift_op additive_expression)*
-        // shift_op: LEFT_OP | RIGHT_OP
-        // NOTE: shift_op factored out by the author.
-        // NOT SUPPORTED BY THE STANDARD YET
-        return parseAdditiveExpression();
-    }
-
-    private boolean parseAdditiveExpression() {
-        // additive_expression: multiplicative_expression (addop multiplicative_expression)*
-        // addop: UNARY_PLUS | DASH
-        // NOTE: addop factored out by the author
-        PsiBuilder.Marker mark = b.mark();
-        if (!parseMultiplicativeExpression()) {
-            mark.drop();
-            return false;
-        }
-        while (tryMatch(ADDITIVE_OPERATORS)) {
-            if (parseMultiplicativeExpression()) {
-                mark.done(ADDITIVE_EXPRESSION);
-                mark = mark.precede();
-            } else {
-                mark.error("Expected a factor.");
-                return false;
-            }
-        }
-        mark.drop();
-        return true;
-    }
-
-    private boolean parseMultiplicativeExpression() {
-        // multiplicative_expression: unary_expression (mulop unary_expression)*
-        // mulop: STAR | SLASH | (not supported by the standard: PERCENT)
-        // NOTE: mulop factored out by the author
-        PsiBuilder.Marker mark = b.mark();
-        if (!parseUnaryExpression()) {
-            mark.drop();
-            return false;
-        }
-        while (tryMatch(MULTIPLICATIVE_OPERATORS)) {
-            if (parseUnaryExpression()) {
-                mark.done(MULTIPLICATIVE_EXPRESSION);
-                mark = mark.precede();
-            } else {
-                mark.error("Expected an unary expression.");
-                return false;
-            }
-        }
-        mark.drop();
-        return true;
     }
 
     private boolean parseUnaryExpression() {
@@ -1049,7 +963,7 @@ public class GLSLParsing {
     }
 
     /**
-     * Figures out whether the next sequence of tokens are a method call or a field selection.
+     * Figures out whether the next sequence of operatorTokens are a method call or a field selection.
      * The preceding '.' token is consumed before this is called.
      *
      * @return true if the sequence contains a method call, false otherwise.
