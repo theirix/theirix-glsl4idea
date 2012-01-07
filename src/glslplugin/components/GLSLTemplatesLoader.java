@@ -50,7 +50,7 @@ public class GLSLTemplatesLoader implements ApplicationComponent {
 
         FileTemplate template = fileTemplateManager.getTemplate("GLSL Shader");
         if (template != null) {
-            fileTemplateManager.removeTemplate(template, true);
+            fileTemplateManager.removeTemplate(template);
         }
     }
 }

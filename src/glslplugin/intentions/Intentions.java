@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.util.IncorrectOperationException;
 import glslplugin.GLSLSupportLoader;
 import glslplugin.intentions.vectorcomponents.VectorComponentsPredicate;
@@ -117,7 +118,7 @@ public abstract class Intentions extends PsiElementBaseIntentionAction {
 
     public static void reformat(PsiElement statement) {
         if (statement.getContainingFile() instanceof GLSLFile) {
-            statement.getManager().getCodeStyleManager().reformat(statement);
+            CodeStyleManager.getInstance(statement.getManager()).reformat(statement);
         }
     }
 

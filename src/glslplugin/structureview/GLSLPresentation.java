@@ -21,7 +21,7 @@ package glslplugin.structureview;
 
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import glslplugin.GLSLSupportLoader;
 import glslplugin.lang.elements.declarations.GLSLDeclarator;
 import glslplugin.lang.elements.types.GLSLQualifiedType;
@@ -30,12 +30,12 @@ import glslplugin.lang.elements.types.GLSLTypeQualifier;
 import javax.swing.*;
 
 class GLSLPresentation implements ItemPresentation {
-    public static final Icon FOLDER_OPEN = Icons.DIRECTORY_OPEN_ICON;
-    public static final Icon FOLDER_CLOSED = Icons.DIRECTORY_CLOSED_ICON;
-    public static final Icon FIELD = Icons.FIELD_ICON;
-    public static final Icon PROTOTYPE = Icons.ABSTRACT_METHOD_ICON;
-    public static final Icon FUNCTION = Icons.METHOD_ICON;
-    public static final Icon STRUCT = Icons.ANNOTATION_TYPE_ICON;
+    public static final Icon FOLDER_OPEN = PlatformIcons.DIRECTORY_OPEN_ICON;
+    public static final Icon FOLDER_CLOSED = PlatformIcons.DIRECTORY_CLOSED_ICON;
+    public static final Icon FIELD = PlatformIcons.FIELD_ICON;
+    public static final Icon PROTOTYPE = PlatformIcons.ABSTRACT_METHOD_ICON;
+    public static final Icon FUNCTION = PlatformIcons.METHOD_ICON;
+    public static final Icon STRUCT = PlatformIcons.ANNOTATION_TYPE_ICON;
 
     private String name;
     private Icon openIcon = null;
