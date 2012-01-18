@@ -196,8 +196,7 @@ public class GLSLParsing {
             mark = b.mark();
         }
 
-        parseQualifierList();
-        parseTypeSpecifier();
+        parseQualifiedTypeSpecifier();
 
         PsiBuilder.Marker postType = b.mark();
 
@@ -206,12 +205,13 @@ public class GLSLParsing {
             // (struct definitions will look like this)
             postType.drop();
             parseDeclaratorList(); // the list will always be empty.
-            match(SEMICOLON, "Expected.");
+            match(SEMICOLON, "Expected");
             mark.done(VARIABLE_DECLARATION);
             return true;
 
-        } else if (tryMatch(IDENTIFIER)) {
+        } else if (b.getTokenType() ==  IDENTIFIER || b.getTokenType() == LEFT_PAREN) {
             // Identifier means either declarators, or function declaration/definition
+            match(IDENTIFIER, "Missing function name");
 
             if (b.getTokenType() == SEMICOLON ||
                     b.getTokenType() == COMMA ||
@@ -264,7 +264,6 @@ public class GLSLParsing {
             }
         } else if (GLSLTokenTypes.OPERATORS.contains(b.getTokenType()) ||
                 b.getTokenType() == DOT ||
-                b.getTokenType() == LEFT_PAREN ||
                 b.getTokenType() == LEFT_BRACKET) {
             // this will handle most expressions
             postType.drop();
@@ -293,6 +292,12 @@ public class GLSLParsing {
         return false;
     }
 
+    private void parseQualifiedTypeSpecifier() {
+        parseQualifierList(true);
+        parseTypeSpecifier();
+        parseQualifierList(false);
+    }
+
     private void parseParameterDeclarationList() {
         // parameter_declaration_list: <nothing>
         //                           | VOID
@@ -313,8 +318,8 @@ public class GLSLParsing {
         // parameter_declaration: [parameter_qualifier] [type_qualifier] IDENTIFIER [array_declarator]
         final PsiBuilder.Marker mark = b.mark();
 
-        parseQualifierList();
-        parseTypeSpecifier();
+        parseQualifiedTypeSpecifier();
+
         if (b.getTokenType() == IDENTIFIER) {
             parseStructOrParameterDeclarator(PARAMETER_DECLARATOR);
         } else {
@@ -516,8 +521,7 @@ public class GLSLParsing {
         if (lookaheadDeclarationStatement()) {
             PsiBuilder.Marker mark = b.mark();
 
-            parseQualifierList();
-            parseTypeSpecifier();
+            parseQualifiedTypeSpecifier();
 
             PsiBuilder.Marker list = b.mark();
             PsiBuilder.Marker declarator = b.mark();
@@ -697,8 +701,7 @@ public class GLSLParsing {
 
         PsiBuilder.Marker mark = b.mark();
 
-        parseQualifierList();
-        parseTypeSpecifier();
+        parseQualifiedTypeSpecifier();
         parseDeclaratorList();
         mark.done(VARIABLE_DECLARATION);
 
@@ -1229,8 +1232,7 @@ public class GLSLParsing {
 
         final PsiBuilder.Marker mark = b.mark();
 
-        parseQualifierList();
-        parseTypeSpecifier();
+        parseQualifiedTypeSpecifier();
         parseStructDeclaratorList();
         match(SEMICOLON, "Expected ';' after declaration.");
 
@@ -1281,7 +1283,7 @@ public class GLSLParsing {
         mark.done(type);
     }
 
-    private void parseQualifierList() {
+    private void parseQualifierList(boolean validPlacement) {
 
         final PsiBuilder.Marker mark = b.mark();
 
@@ -1290,9 +1292,15 @@ public class GLSLParsing {
 
             b.advanceLexer();
 
-            mark2.done(QUALIFIER);
+            if(validPlacement)
+                mark2.done(QUALIFIER);
+            else
+                mark2.error("Qualifier not allowed here.");
         }
-        mark.done(QUALIFIER_LIST);
+        if (validPlacement)
+            mark.done(QUALIFIER_LIST);
+        else
+            mark.drop();
     }
 
 }
