@@ -19,8 +19,8 @@
 
 package glslplugin.lang.elements.statements;
 
-import glslplugin.lang.elements.expressions.GLSLExpression;
+import glslplugin.lang.elements.expressions.GLSLCondition;
 
 public interface ConditionStatement {
-    GLSLExpression getConditionExpression();
+    GLSLCondition getCondition();
 }

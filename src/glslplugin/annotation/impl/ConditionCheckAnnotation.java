@@ -21,7 +21,7 @@ package glslplugin.annotation.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import glslplugin.annotation.Annotator;
-import glslplugin.lang.elements.expressions.GLSLExpression;
+import glslplugin.lang.elements.expressions.GLSLCondition;
 import glslplugin.lang.elements.statements.ConditionStatement;
 import glslplugin.lang.elements.statements.GLSLStatement;
 import glslplugin.lang.elements.statements.GLSLWhileStatement;
@@ -33,7 +33,7 @@ public class ConditionCheckAnnotation implements Annotator<GLSLStatement> {
 
         if (expr instanceof ConditionStatement) {
             ConditionStatement conditionStatement = (ConditionStatement) expr;
-            GLSLExpression condition = conditionStatement.getConditionExpression();
+            GLSLCondition condition = conditionStatement.getCondition();
 
             if (condition != null) {
                 GLSLType conditionType = condition.getType();

@@ -19,9 +19,9 @@
 
 package glslplugin.lang.elements.statements;
 
+import glslplugin.lang.elements.expressions.GLSLCondition;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
-import glslplugin.lang.elements.expressions.GLSLExpression;
 
 /**
  * GLSLDeclarationStatement is ...
@@ -35,9 +35,8 @@ public class GLSLDoStatement extends GLSLStatement implements ConditionStatement
         super(astNode);
     }
 
-    public GLSLExpression getConditionExpression() {
-        GLSLExpression condition = findChildByClass(GLSLExpression.class);
-        //todo: condition == null when the expression is a declaration
+    public GLSLCondition getCondition() {
+        GLSLCondition condition = findChildByClass(GLSLCondition.class);
         assert condition != null;
         return condition;
     }

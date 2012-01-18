@@ -20,7 +20,7 @@
 package glslplugin.lang.elements.statements;
 
 import com.intellij.lang.ASTNode;
-import glslplugin.lang.elements.expressions.GLSLExpression;
+import glslplugin.lang.elements.expressions.GLSLCondition;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,8 +35,8 @@ public class GLSLWhileStatement extends GLSLStatement implements ConditionStatem
         super(astNode);
     }
 
-    public GLSLExpression getConditionExpression() {
-        return findChildByClass(GLSLExpression.class);
+    public GLSLCondition getCondition() {
+        return findChildByClass(GLSLCondition.class);
     }
     
     GLSLStatement getLoopStatement() {

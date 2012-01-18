@@ -405,7 +405,7 @@ public class GLSLParsing {
         eatInvalidOperators();
 
         final IElementType type = b.getTokenType();
-        boolean result = false;
+        boolean result;
 
         if (EXPRESSION_FIRST_SET.contains(type) || QUALIFIER_TOKENS.contains(type)) {
             // This set also includes the first set of declaration_statement
@@ -512,6 +512,7 @@ public class GLSLParsing {
         // NOTE: The spec, allows the condition expression in 'for' and 'while' loops
         //       to declare a single variable.
 
+        PsiBuilder.Marker conditionMark = b.mark();
         if (lookaheadDeclarationStatement()) {
             PsiBuilder.Marker mark = b.mark();
 
@@ -533,6 +534,7 @@ public class GLSLParsing {
         } else {
             parseExpression();
         }
+        conditionMark.done(CONDITION);
     }
 
     private void parseForInitStatement() {
@@ -581,7 +583,7 @@ public class GLSLParsing {
         parseStatement();
         match(WHILE_KEYWORD, "Missing 'while'.");
         match(LEFT_PAREN, "Missing '(' after 'while'.");
-        parseExpression();
+        parseCondition();
         match(RIGHT_PAREN, "Missing ')' after 'while'.");
         match(SEMICOLON, "Missing ';' after 'do-while'.");
 
@@ -609,7 +611,7 @@ public class GLSLParsing {
 
         match(IF_KEYWORD, "Missing 'if'.");
         match(LEFT_PAREN, "Missing '(' after 'if'.");
-        parseExpression();
+        parseCondition();
         match(RIGHT_PAREN, "Missing ')' after 'if'.");
         parseStatement();
         tryParseElsePart();

@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import glslplugin.lang.elements.GLSLElement;
 import glslplugin.lang.elements.GLSLTokenTypes;
 import glslplugin.lang.elements.declarations.GLSLDeclaration;
+import glslplugin.lang.elements.expressions.GLSLCondition;
 import glslplugin.lang.elements.expressions.GLSLExpression;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,8 +87,8 @@ public class GLSLForStatement extends GLSLStatement implements ConditionStatemen
      *
      * @return the loop condition element.
      */
-    public GLSLExpression getConditionExpression() {
-        return (GLSLExpression) getForElements()[1];
+    public GLSLCondition getCondition() {
+        return (GLSLCondition) getForElements()[1];
     }
 
     /**

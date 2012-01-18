@@ -64,6 +64,7 @@ public class GLSLPsiElementFactoryImpl implements GLSLPsiElementFactory {
         if (type == GLSLElementTypes.LOGICAL_XOR_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
         if (type == GLSLElementTypes.ASSIGNMENT_EXPRESSION) return new GLSLAssignmentExpression(node);
         if (type == GLSLElementTypes.ADDITIVE_EXPRESSION) return new GLSLBinaryOperatorExpression(node);
+        if (type == GLSLElementTypes.CONDITION) return new GLSLCondition(node);
 
         if (type == GLSLElementTypes.FIELD_SELECTION_EXPRESSION) return new GLSLFieldSelectionExpression(node);
         if (type == GLSLElementTypes.FUNCTION_CALL_EXPRESSION) return new GLSLFunctionCallExpression(node);
