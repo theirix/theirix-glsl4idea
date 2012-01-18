@@ -25,6 +25,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import glslplugin.lang.elements.*;
 import glslplugin.lang.elements.reference.GLSLTypeReference;
+import glslplugin.lang.elements.statements.GLSLDeclarationStatement;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import glslplugin.lang.parser.GLSLFile;

@@ -20,10 +20,7 @@
 package glslplugin.lang.elements.statements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
 import glslplugin.lang.elements.expressions.GLSLExpression;
-import glslplugin.lang.elements.declarations.GLSLDeclarationStatement;
-import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
 import org.jetbrains.annotations.NotNull;
 
 /**

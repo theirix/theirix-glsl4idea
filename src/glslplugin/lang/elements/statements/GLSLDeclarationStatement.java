@@ -17,11 +17,10 @@
  *     along with glsl4idea.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package glslplugin.lang.elements.declarations;
+package glslplugin.lang.elements.statements;
 
 import org.jetbrains.annotations.NotNull;
 import com.intellij.lang.ASTNode;
-import glslplugin.lang.elements.statements.GLSLStatement;
 import glslplugin.lang.elements.declarations.GLSLVariableDeclaration;
 
 /**

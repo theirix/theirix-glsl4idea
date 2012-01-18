@@ -25,6 +25,7 @@ import glslplugin.lang.elements.GLSLIdentifier;
 import glslplugin.lang.elements.GLSLReferenceElement;
 import glslplugin.lang.elements.declarations.*;
 import glslplugin.lang.elements.reference.GLSLVariableReference;
+import glslplugin.lang.elements.statements.GLSLDeclarationStatement;
 import glslplugin.lang.elements.types.GLSLType;
 import glslplugin.lang.elements.types.GLSLTypes;
 import glslplugin.lang.parser.GLSLFile;
