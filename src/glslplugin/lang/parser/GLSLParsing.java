@@ -205,7 +205,7 @@ public class GLSLParsing {
             // (struct definitions will look like this)
             postType.drop();
             parseDeclaratorList(); // the list will always be empty.
-            match(SEMICOLON, "Expected");
+            match(SEMICOLON, "Missing ';'");
             mark.done(VARIABLE_DECLARATION);
             return true;
 
@@ -1254,7 +1254,7 @@ public class GLSLParsing {
     /**
      * Parses a struct declarator or a parameter declarator depending on the argument.
      *
-     * @param type equald either STRUCT_DECLARATOR or PARAMETER_DECLARATOR.
+     * @param type equals either STRUCT_DECLARATOR or PARAMETER_DECLARATOR.
      */
     private void parseStructOrParameterDeclarator(IElementType type) {
         // struct_declarator: IDENTIFIER [ '[' constant_expression ']' ]
