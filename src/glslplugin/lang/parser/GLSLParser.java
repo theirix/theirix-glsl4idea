@@ -29,7 +29,7 @@ public class GLSLParser implements PsiParser {
 
     @NotNull
     public ASTNode parse(IElementType root, PsiBuilder builder) {
-        builder.setDebugMode(true);
+        //builder.setDebugMode(true);
         final PsiBuilder.Marker rootMarker = builder.mark();
         GLSLParsing theRealParser = new GLSLParsing(builder);
         try {
