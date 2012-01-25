@@ -206,6 +206,7 @@
     <dictionary name="Yngve">
       <words>
         <w>glsl</w>
+        <w>typename</w>
       </words>
     </dictionary>
   </component>
