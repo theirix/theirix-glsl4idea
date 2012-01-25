@@ -20,19 +20,12 @@
 package glslplugin.lang.elements.declarations;
 
 import com.intellij.lang.ASTNode;
-import glslplugin.lang.elements.expressions.GLSLExpression;
 import glslplugin.lang.elements.types.GLSLBasicFunctionType;
 import glslplugin.lang.elements.types.GLSLFunctionType;
-import glslplugin.lang.elements.types.GLSLType;
-import glslplugin.lang.elements.types.GLSLTypeCompatibilityLevel;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * GLSLFunctionDeclarationImpl is ...
- *
- * @author Yngve Devik Hammersland
- *         Date: Feb 2, 2009
- *         Time: 12:27:15 PM
+ * GLSLFunctionDeclarationImpl is the psi implementation of a function declaration.
  */
 public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl implements GLSLFunctionDeclaration {
     private GLSLFunctionType type;
@@ -52,17 +45,6 @@ public class GLSLFunctionDeclarationImpl extends GLSLSingleDeclarationImpl imple
         final GLSLDeclarationList list = findChildByClass(GLSLDeclarationList.class);
         assert list != null;
         return list;
-    }
-
-    public GLSLTypeCompatibilityLevel getParameterCompatibliltyLevel(GLSLExpression[] parameters) {
-        final GLSLParameterDeclaration[] declaredParameters = getParameters();
-
-        GLSLType[] types = new GLSLType[parameters.length];
-        for (int i = 0; i < types.length; i++) {
-            types[i] = parameters[i].getType();
-        }
-
-        return getType().getParameterCompatibilityLevel(types);
     }
 
     private static GLSLParameterDeclaration[] castToParameters(GLSLDeclaration[] declarations) {
