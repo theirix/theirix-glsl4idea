@@ -48,6 +48,7 @@ public class GLSLColorAndFontsPage implements ColorSettingsPage {
                 new AttributesDescriptor("Identifiers", GLSLHighlighter.GLSL_IDENTIFIER),
                 new AttributesDescriptor("Parameter qualifiers", GLSLHighlighter.GLSL_PARAMETER_QUALIFIERS),
                 new AttributesDescriptor("Type qualifiers", GLSLHighlighter.GLSL_TYPE_QUALIFIERS),
+                new AttributesDescriptor("Support tokeins", GLSLHighlighter.GLSL_SUPPORT_TOKENS),
 
         };
     }

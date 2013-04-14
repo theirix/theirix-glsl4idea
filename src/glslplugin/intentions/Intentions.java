@@ -152,13 +152,9 @@ public abstract class Intentions extends PsiElementBaseIntentionAction {
         return operationStatus.hasReadonlyFiles();
     }
 
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, PsiElement element) throws IncorrectOperationException {
         this.editor = editor;
 
-        if (isFileReadOnly(project, file)) {
-            return;
-        }
-        final PsiElement element = findMatchingElement(file, editor);
         if (element == null) {
             return;
         }

@@ -188,6 +188,11 @@ public class GLSLTokenTypes {
             EXPRESSION_FIRST_SET
     );
     public static final TokenSet FUNCTION_IDENTIFIER_TOKENS = merge(TokenSet.create(IDENTIFIER), TYPE_SPECIFIER_NONARRAY_TOKENS);
+    
+    public static final TokenSet SUPPORT_TOKENS =
+            merge(OPERATORS, TokenSet.create(
+                    LEFT_BRACE, RIGHT_BRACE, LEFT_PAREN, RIGHT_PAREN, LEFT_BRACKET, RIGHT_BRACKET,
+                    LEFT_ANGLE, RIGHT_ANGLE, QUESTION, COLON, BANG, DOT, SEMICOLON, COMMA));
 
     public static TokenSet merge(TokenSet... sets) {
         TokenSet tokenSet = TokenSet.create();
@@ -197,3 +202,4 @@ public class GLSLTokenTypes {
         return tokenSet;
     }
 }
+

@@ -39,6 +39,7 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
     static final TextAttributesKey GLSL_FLOW_KEYWORDS = TextAttributesKey.createTextAttributesKey("GLSL.FLOW_KEYWORDS", new TextAttributes(new Color(255, 128, 0), null, null, null, Font.PLAIN));
     static final TextAttributesKey GLSL_COMMENT = TextAttributesKey.createTextAttributesKey("GLSL.COMMENT", SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes());
     static final TextAttributesKey GLSL_IDENTIFIER = TextAttributesKey.createTextAttributesKey("GLSL.IDENTIFIER", new TextAttributes(Color.BLACK, null, null, null, Font.PLAIN));
+    static final TextAttributesKey GLSL_SUPPORT_TOKENS = TextAttributesKey.createTextAttributesKey("GLSL.SUPPORT_TOKENS", new TextAttributes(Color.BLACK, null, null, null, Font.PLAIN));
     static final TextAttributesKey GLSL_COMPILER_DIRECTIVE_VERSION = TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE_VERSION", new TextAttributes(Color.GREEN.darker().darker(), null, null, null, Font.ITALIC));
     static final TextAttributesKey GLSL_COMPILER_DIRECTIVE_EXTENSION = TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE_EXTENSION", new TextAttributes(Color.GREEN.darker().darker(), null, null, null, Font.ITALIC));
     static final TextAttributesKey GLSL_COMPILER_DIRECTIVE_PRAGMA = TextAttributesKey.createTextAttributesKey("GLSL.COMPILER_DIRECTIVE_PRAGMA", new TextAttributes(Color.GREEN.darker().darker(), null, null, null, Font.ITALIC));
@@ -79,6 +80,8 @@ public class GLSLHighlighter extends SyntaxHighlighterBase {
             return new TextAttributesKey[]{GLSL_PARAMETER_QUALIFIERS};
         } else if (FLOW_KEYWORDS.contains(type)) {
             return new TextAttributesKey[]{GLSL_FLOW_KEYWORDS};
+        } else if (SUPPORT_TOKENS.contains(type)) {
+            return new TextAttributesKey[]{GLSL_SUPPORT_TOKENS};
         } else if (type == UNKNOWN) {
             return new TextAttributesKey[]{GLSL_UNKNOWN};
         }
